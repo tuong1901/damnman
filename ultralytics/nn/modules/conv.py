@@ -751,10 +751,10 @@ class Conv3BN(nn.Module):
 class InvertedResidual(nn.Module):
     """
     Inverted residual block for MobileNetV3.
-    
+
     This module implements the inverted residual block used in MobileNetV3 architecture,
     which includes expansion, depthwise convolution, and squeeze-excitation layers.
-    
+
     Arguments: [c1, c2, oup, hidden_dim, kernel_size, stride, expand_ratio, use_se]
     Where c1 is auto-provided by ultralytics parser and c2 is the output channels
     """
@@ -777,7 +777,7 @@ class InvertedResidual(nn.Module):
 
         # Use c2 as the actual output channels (ultralytics auto-calculated)
         oup = c2
-        
+
         # Calculate the actual hidden dimension
         if expand_ratio == 1:
             # For the first block, use c1 as hidden_dim
@@ -785,13 +785,15 @@ class InvertedResidual(nn.Module):
         else:
             # For other blocks, use the provided hidden_dim
             pass
-            
+
         self.identity = stride == 1 and c1 == oup
 
         if expand_ratio == 1:
             self.conv = nn.Sequential(
                 # dw
-                nn.Conv2d(hidden_dim, hidden_dim, kernel_size, stride, (kernel_size - 1) // 2, groups=hidden_dim, bias=False),
+                nn.Conv2d(
+                    hidden_dim, hidden_dim, kernel_size, stride, (kernel_size - 1) // 2, groups=hidden_dim, bias=False
+                ),
                 nn.BatchNorm2d(hidden_dim),
                 nn.Hardswish() if use_se else nn.ReLU(inplace=True),
                 # Squeeze-and-Excite
@@ -807,7 +809,9 @@ class InvertedResidual(nn.Module):
                 nn.BatchNorm2d(hidden_dim),
                 nn.Hardswish() if use_se else nn.ReLU(inplace=True),
                 # dw
-                nn.Conv2d(hidden_dim, hidden_dim, kernel_size, stride, (kernel_size - 1) // 2, groups=hidden_dim, bias=False),
+                nn.Conv2d(
+                    hidden_dim, hidden_dim, kernel_size, stride, (kernel_size - 1) // 2, groups=hidden_dim, bias=False
+                ),
                 nn.BatchNorm2d(hidden_dim),
                 # Squeeze-and-Excite
                 SELayer(hidden_dim) if use_se else nn.Identity(),
@@ -850,7 +854,7 @@ class SELayer(nn.Module):
             nn.Linear(channel, channel // reduction, bias=False),
             nn.ReLU(inplace=True),
             nn.Linear(channel // reduction, channel, bias=False),
-            nn.Hardsigmoid()
+            nn.Hardsigmoid(),
         )
 
     def forward(self, x):

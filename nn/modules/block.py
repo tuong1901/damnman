@@ -1625,15 +1625,15 @@ class SCDown(nn.Module):
 class C2fCBAMv2(nn.Module):
     """
     C2f module with CBAM attention mechanism v2.
-    
-    This module combines the C2f block from YOLOv8 with Convolutional Block Attention Module (CBAM)
-    for enhanced feature representation.
+
+    This module combines the C2f block from YOLOv8 with Convolutional Block Attention Module (CBAM) for enhanced feature
+    representation.
     """
 
     def __init__(self, c1, c2, n=1, shortcut=False, g=1, e=0.5):
         """
         Initialize C2fCBAMv2 module.
-        
+
         Args:
             c1 (int): Number of input channels.
             c2 (int): Number of output channels.
@@ -1649,15 +1649,16 @@ class C2fCBAMv2(nn.Module):
         self.m = nn.ModuleList(Bottleneck(self.c, self.c, shortcut, g, k=((3, 3), (3, 3)), e=1.0) for _ in range(n))
         # Add CBAM attention module
         from .conv import CBAM
+
         self.cbam = CBAM(c2)
 
     def forward(self, x):
         """
         Forward pass through C2fCBAMv2 module.
-        
+
         Args:
             x (torch.Tensor): Input tensor.
-            
+
         Returns:
             (torch.Tensor): Output tensor with CBAM attention applied.
         """
